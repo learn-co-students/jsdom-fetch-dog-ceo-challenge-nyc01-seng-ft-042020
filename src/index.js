@@ -1,5 +1,7 @@
 console.log('%c HI', 'color: firebrick')
 
+let breeds = [];
+
 document.addEventListener("DOMContentLoaded", function(e){
     getDogs();   
     dogBreed(); 
@@ -23,12 +25,14 @@ function addImage(dogUrl){
     // dogImg.style.width = '100px';
 };
 
-let dogBreed = () => {
-    fetch("https://dog.ceo/api/breeds/list/all")
+function dogBreed(){
+    const breedURL = 'https://dog.ceo/api/breeds/list/all'
+    fetch(breedURL)
     .then(response => response.json())
-    .then(results => {
-        breeds = Object.keys(results.message)
-        breeds.forEach(breed => addBreed(breed))
+    .then(results =>{
+        breeds = Object.keys(results.message);
+        updateBreedList(breeds);
+        addBreedSelectListener();
     });
 };
 
@@ -42,3 +46,31 @@ function addBreed(breeds){
     });
 };
 
+// * choose letter
+// * eventlistener
+// * list breeds with that letter only
+
+function updateBreedList(breeds) {
+    let ul = document.querySelector('#dog-breeds');
+    removeChildren(ul);
+    breeds.forEach(breed => addBreed(breed));
+  }
+  
+  function removeChildren(element) {
+    let child = element.lastElementChild;
+    while (child) {
+      element.removeChild(child);
+      child = element.lastElementChild;
+    }
+  }
+  
+  function selectBreeds(letter) {
+    updateBreedList(breeds.filter(breed => breed.startsWith(letter)));
+  }
+  
+  function addBreedSelectListener() {
+    let breedDropdown = document.querySelector('#breed-dropdown');
+    breedDropdown.addEventListener('change', function (event) {
+      selectBreeds(event.target.value);
+    });
+  }
